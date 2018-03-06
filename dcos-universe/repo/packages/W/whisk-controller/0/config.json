@@ -73,7 +73,7 @@
         "version_date":{
           "description": "OpenWhisk version date.",
           "type": "string",
-          "default": ""
+          "default": "2018-03-06"
         },
         "version_buildno":{
           "description": "OpenWhisk version build number.",
@@ -89,6 +89,35 @@
           "description": "Docker log driver to use for the container.",
           "type": "string",
           "default": "json-file"
+        },
+        "runtimes_manifest":{
+          "description": "Runtimes Manifest",
+          "type": "string",
+          "default": "{\\\"bypassPullForLocalImages\\\":false,\\\"defaultImagePrefix\\\":\\\"openwhisk\\\",\\\"defaultImageTag\\\":\\\"latest\\\",\\\"runtimes\\\":{\\\"nodejs\\\":[{\\\"kind\\\":\\\"nodejs\\\",\\\"image\\\":{\\\"name\\\":\\\"nodejsaction\\\"},\\\"deprecated\\\":true},{\\\"kind\\\":\\\"nodejs:6\\\",\\\"default\\\":true,\\\"image\\\":{\\\"name\\\":\\\"nodejs6action\\\"}},{\\\"kind\\\":\\\"nodejs:8\\\",\\\"default\\\":false,\\\"image\\\":{\\\"name\\\":\\\"nodejs8action\\\"}}]}}"
+        },
+        "placement":{
+          "description": "Constraints.",
+          "type": "string",
+          "default": "[]"
+        },
+        "additional_vars": {
+          "description": "Additional env vars.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "value"
+            ]
+          },
+          "default": []
         }
       },
       "required": [
@@ -209,7 +238,7 @@
         "actions_db_ddoc": {
           "description": "Actions design doc.",
           "type": "string",
-          "default": "whisks.v2"
+          "default": "whisks.v2.1.0"
         },
         "activations_db": {
           "description": "Activations database.",
@@ -219,12 +248,12 @@
         "activations_db_ddoc": {
           "description": "Activations design doc.",
           "type": "string",
-          "default": "whisks.v2"
+          "default": "whisks.v2.1.0"
         },
         "activations_filter_ddoc": {
           "description": "Activation filters design doc.",
           "type": "string",
-          "default": "whisks-filters.v2"
+          "default": "whisks-filters.v2.1.0"
         },
         "auths_db": {
           "description": "Auth database.",
@@ -256,18 +285,48 @@
           "default": 2,
           "minimum": 1
         },
-        "retention_bytes":{
-          "description": "Kafka retention bytes specified when creating topics.",
+        "cache_invalidation_retention_bytes":{
+          "description": "Cache invalidation topic: Kafka retention bytes specified when creating topics.",
           "type": "integer",
           "default": 1073741824
         },
-        "retention_ms":{
-          "description": "Kafka retention ms specified when creating topics.",
+        "cache_invalidation_retention_ms":{
+          "description": "Cache invalidation topic: Kafka retention ms specified when creating topics.",
           "type": "integer",
           "default": 172800000
         },
-        "segment_bytes":{
-          "description": "Kafka segment bytes specified when creating topics.",
+        "cache_invalidation_segment_bytes":{
+          "description": "Cache invalidation topic: Kafka segment bytes specified when creating topics.",
+          "type": "integer",
+          "default": 536870912
+        },
+        "completed_retention_bytes":{
+          "description": "Completed topic: Kafka retention bytes specified when creating topics.",
+          "type": "integer",
+          "default": 1073741824
+        },
+        "completed_retention_ms":{
+          "description": "Completed topic: Kafka retention ms specified when creating topics.",
+          "type": "integer",
+          "default": 172800000
+        },
+        "completed_segment_bytes":{
+          "description": "Completed topic: Kafka segment bytes specified when creating topics.",
+          "type": "integer",
+          "default": 536870912
+        },
+        "health_retention_bytes":{
+          "description": "Health topic: Kafka retention bytes specified when creating topics.",
+          "type": "integer",
+          "default": 1073741824
+        },
+        "health_retention_ms":{
+          "description": "Health topic: Kafka retention ms specified when creating topics.",
+          "type": "integer",
+          "default": 172800000
+        },
+        "health_segment_bytes":{
+          "description": "Health topic: Kafka segment bytes specified when creating topics.",
           "type": "integer",
           "default": 536870912
         }
@@ -325,6 +384,21 @@
           "description": "The maximum number of actions in a sequence.",
           "type": "integer",
           "default": 50
+        },
+        "actions_memory_min": {
+          "description": "The min memory allowance to run an action.",
+          "type": "string",
+          "default": "128 m"
+        },
+        "actions_memory_max": {
+          "description": "The max memory allowance to run an action.",
+          "type": "string",
+          "default": "512 m"
+        },
+        "actions_memory_std": {
+          "description": "The default memory allowance to run an action.",
+          "type": "string",
+          "default": "256 m"
         }
       }
     }

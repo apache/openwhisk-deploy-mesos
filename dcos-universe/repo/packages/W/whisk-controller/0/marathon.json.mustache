@@ -3,6 +3,7 @@
   "cpus": {{service.cpus}},
   "mem": {{service.mem}},
   "instances": {{service.instances}},
+  "constraints": {{{service.placement}}},
   "env": {
 
     "JAVA_OPTS": "{{service.java_opts}}",
@@ -19,10 +20,10 @@
     "DB_USERNAME": "{{couchdb.username}}",
     "DB_PASSWORD": "{{couchdb.password}}",
     "DB_WHISK_ACTIONS": "{{couchdb.actions_db}}",
-    "DB_WHISK_ACTIONS_DDOC": "{{couchdb.actions_db_ddoc}}",
+    "CONFIG_whisk_db_actionsDdoc": "{{couchdb.actions_db_ddoc}}",
     "DB_WHISK_ACTIVATIONS": "{{couchdb.activations_db}}",
-    "DB_WHISK_ACTIVATIONS_DDOC": "{{couchdb.activations_db_ddoc}}",
-    "DB_WHISK_ACTIVATIONS_FILTER_DDOC": "{{couchdb.activations_filter_ddoc}}",
+    "CONFIG_whisk_db_activationsDdoc": "{{couchdb.activations_db_ddoc}}",
+    "CONFIG_whisk_db_activationsFilterDdoc": "{{couchdb.activations_filter_ddoc}}",
     "DB_WHISK_AUTHS": "{{couchdb.auths_db}}",
 
     "LIMITS_ACTIONS_INVOKES_PERMINUTE": "{{limits.actions_invokes_per_minute}}",
@@ -35,12 +36,18 @@
     "PORT": "{{service.port}}",
 
     "KAFKA_HOSTS": "{{kafka.hosts}}",
-    "KAFKA_REPLICATIONFACTOR": "{{kafka.replication_factor}}",
-    "KAFKA_TOPICS_INVOKER_RETENTION_BYTES": "{{kafka.retention_bytes}}",
-    "KAFKA_TOPICS_INVOKER_RETENTION_MS": "{{kafka.retention_ms}}",
-    "KAFKA_TOPICS_INVOKER_SEGMENT_BYTES": "{{kafka.segment_bytes}}",
+    "CONFIG_whisk_kafka_replicationFactor": "{{kafka.replication_factor}}",
+    "CONFIG_whisk_kafka_topics_cacheInvalidation_retentionBytes": "{{kafka.cache_invalidation_retention_bytes}}",
+    "CONFIG_whisk_kafka_topics_cacheInvalidation_retentionMs": "{{kafka.cache_invalidation_retention_ms}}",
+    "CONFIG_whisk_kakfa_topics_cacheInvalidation_segmentBytes": "{{kafka.cache_invalidation_segment_bytes}}",
+    "CONFIG_whisk_kafka_topics_completed_retentionBytes": "{{kafka.completed_retention_bytes}}",
+    "CONFIG_whisk_kafka_topics_completed_retentionMs": "{{kafka.completed_retention_ms}}",
+    "CONFIG_whisk_kakfa_topics_completed_segmentBytes": "{{kafka.completed_segment_bytes}}",
+    "CONFIG_whisk_kafka_topics_health_retentionBytes": "{{kafka.health_retention_bytes}}",
+    "CONFIG_whisk_kafka_topics_health_retentionMs": "{{kafka.health_retention_ms}}",
+    "CONFIG_whisk_kakfa_topics_health_segmentBytes": "{{kafka.health_segment_bytes}}",
 
-    "RUNTIMES_MANIFEST": "{\"runtimes\":{\"nodejs\":[{\"kind\":\"nodejs\",\"image\":{\"name\":\"nodejsaction\"},\"deprecated\":true},{\"kind\":\"nodejs:6\",\"default\":true,\"image\":{\"name\":\"nodejs6action\"}}],\"python\":[{\"kind\":\"python\",\"image\":{\"name\":\"python2action\"}},{\"kind\":\"python:2\",\"default\":true,\"image\":{\"name\":\"python2action\"}},{\"kind\":\"python:3\",\"image\":{\"name\":\"python3action\"}}],\"swift\":[{\"kind\":\"swift\",\"image\":{\"name\":\"swiftaction\"},\"deprecated\":true},{\"kind\":\"swift:3\",\"default\":true,\"image\":{\"name\":\"swift3action\"}}],\"java\":[{\"kind\":\"java\",\"attached\":{\"attachmentName\":\"jarfile\",\"attachmentType\":\"application\/java-archive\"},\"sentinelledLogs\":false,\"requireMain\":true,\"image\":{\"name\":\"java8action\"},\"default\":true}]}}",
+    "RUNTIMES_MANIFEST": "{{{service.runtimes_manifest}}}",
 
     "LOADBALANCER_HOST": "{{apigateway.host}}",
 
@@ -65,7 +72,15 @@
     "CONFIG_akka_actor_provider":"{{akka.actor_provider}}",
     "CONFIG_akka_remote_netty_tcp_hostname":"{{akka.cluster_hostname}}",
     "CONFIG_akka_remote_netty_tcp_port":"{{akka.cluster_port}}",
-    "CONFIG_akka_remote_netty_tcp_bindPort":"{{akka.cluster_bind_port}}"
+    "CONFIG_akka_remote_netty_tcp_bindPort":"{{akka.cluster_bind_port}}",
+
+    {{#service.additional_vars}}
+        "{{key}}":"{{value}}",
+    {{/service.additional_vars}}
+
+    "CONFIG_whisk_memory_min": "{{limits.actions_memory_min}}",
+    "CONFIG_whisk_memory_max": "{{limits.actions_memory_max}}",
+    "CONFIG_whisk_memory_std": "{{limits.actions_memory_std}}"
   },
   "container": {
     "type": "DOCKER",

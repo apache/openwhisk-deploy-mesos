@@ -3,9 +3,7 @@
   "cpus": {{service.cpus}},
   "mem": {{service.mem}},
   "instances": {{service.instances}},
-  "constraints": [
-    ["hostname","UNIQUE"]
-  ],
+  "constraints": {{{service.placement}}},
   "env": {
 
     "JAVA_OPTS": "{{service.java_opts}}",
@@ -19,10 +17,10 @@
     "PORT": "{{service.port}}",
 
     "KAFKA_HOSTS": "{{kafka.hosts}}",
-    "KAFKA_REPLICATIONFACTOR": "{{kafka.replication_factor}}",
-    "KAFKA_TOPICS_INVOKER_RETENTION_BYTES": "{{kafka.retention_bytes}}",
-    "KAFKA_TOPICS_INVOKER_RETENTION_MS": "{{kafka.retention_ms}}",
-    "KAFKA_TOPICS_INVOKER_SEGMENT_BYTES": "{{kafka.segment_bytes}}",
+    "CONFIG_whisk_kafka_replicationFactor": "{{kafka.replication_factor}}",
+    "CONFIG_whisk_kafka_topics_invoker_retentionBytes": "{{kafka.retention_bytes}}",
+    "CONFIG_whisk_kafka_topics_invoker_retentionMs": "{{kafka.retention_ms}}",
+    "CONFIG_whisk_kakfa_topics_invoker_segmentBytes": "{{kafka.segment_bytes}}",
 
     "DB_PROVIDER": "{{couchdb.provider}}",
     "DB_PROTOCOL": "{{couchdb.protocol}}",
@@ -31,26 +29,26 @@
     "DB_USERNAME": "{{couchdb.username}}",
     "DB_PASSWORD": "{{couchdb.password}}",
     "DB_WHISK_ACTIONS": "{{couchdb.actions_db}}",
-    "DB_WHISK_ACTIONS_DDOC": "{{couchdb.actions_db_ddoc}}",
+    "CONFIG_whisk_db_actionsDdoc": "{{couchdb.actions_db_ddoc}}",
     "DB_WHISK_ACTIVATIONS": "{{couchdb.activations_db}}",
-    "DB_WHISK_ACTIVATIONS_DDOC": "{{couchdb.activations_db_ddoc}}",
-    "DB_WHISK_ACTIVATIONS_FILTER_DDOC": "{{couchdb.activations_filter_ddoc}}",
+    "CONFIG_whisk_db_activationsDdoc": "{{couchdb.activations_db_ddoc}}",
+    "CONFIG_whisk_db_activationsFilterDdoc": "{{couchdb.activations_filter_ddoc}}",
 
     "EDGE_HOST": "{{apigateway.host}}",
     "WHISK_API_HOST_NAME": "{{apigateway.host}}",
     "EDGE_HOST_APIPORT": "{{apigateway.port}}",
 
-    "RUNTIMES_MANIFEST": "{\"runtimes\":{\"nodejs\":[{\"kind\":\"nodejs\",\"image\":{\"name\":\"nodejsaction\"},\"deprecated\":true},{\"kind\":\"nodejs:6\",\"default\":true,\"image\":{\"name\":\"nodejs6action\"}}],\"python\":[{\"kind\":\"python\",\"image\":{\"name\":\"python2action\"}},{\"kind\":\"python:2\",\"default\":true,\"image\":{\"name\":\"python2action\"}},{\"kind\":\"python:3\",\"image\":{\"name\":\"python3action\"}}],\"swift\":[{\"kind\":\"swift\",\"image\":{\"name\":\"swiftaction\"},\"deprecated\":true},{\"kind\":\"swift:3\",\"default\":true,\"image\":{\"name\":\"swift3action\"}}],\"java\":[{\"kind\":\"java\",\"attached\":{\"attachmentName\":\"jarfile\",\"attachmentType\":\"application\/java-archive\"},\"sentinelledLogs\":false,\"requireMain\":true,\"image\":{\"name\":\"java8action\"},\"default\":true}]}}",
+    "RUNTIMES_MANIFEST": "{{{service.runtimes_manifest}}}",
 
     "DOCKER_REGISTRY": "{{action_container.docker_registry}}",
     "DOCKER_IMAGE_PREFIX": "{{action_container.docker_image_prefix}}",
     "DOCKER_IMAGE_TAG": "{{action_container.docker_image_tag}}",
 
     "INVOKER_CONTAINER_NETWORK": "{{action_container.docker_network_name}}",
-    "INVOKER_NUMCORE": "{{service.invoker_numcore}}",
-    "INVOKER_CORESHARE": "{{service.invoker_coreshare}}",
+    "CONFIG_whisk_containerFactory_containerArgs_numCore": "{{service.invoker_numcore}}",
+    "CONFIG_whisk_containerFactory_containerArgs_coreShare": "{{service.invoker_coreshare}}",
     "INVOKER_INSTANCES": "1",
-    "INVOKER_USE_RUNC": "false",
+    "CONFIG_whisk_docker_containerFactory_useRunc": "false",
 
     "METRICS_KAMON": "{{service.metrics_kamon}}",
     "METRICS_LOG": "{{service.metrics_log}}",
@@ -63,7 +61,15 @@
     "CONFIG_kamon_datadog_hostname": "{{kamon.datadog_host}}",
     "CONFIG_kamon_datadog_port": "{{kamon.datadog_port}}",
     "CONFIG_kamon_datadog_applicationName": "{{kamon.datadog_application}}",
-    "CONFIG_kamon_modules_kamonDatadog_autoStart": "{{kamon.datadog_enabled}}"
+    "CONFIG_kamon_modules_kamonDatadog_autoStart": "{{kamon.datadog_enabled}}",
+
+    {{#service.additional_vars}}
+        "{{key}}":"{{value}}",
+    {{/service.additional_vars}}
+
+    "CONFIG_whisk_memory_min": "{{action_container.memory_min}}",
+    "CONFIG_whisk_memory_max": "{{action_container.memory_max}}",
+    "CONFIG_whisk_memory_std": "{{action_container.memory_std}}"
   },
   "container": {
     "type": "DOCKER",
@@ -73,7 +79,7 @@
       "parameters": [
         {
           "key":"label",
-          "value":"{{service.docker_label}}"
+          "value":"{{{service.docker_label}}}"
         },
         {
           "key":"log-driver",
@@ -119,7 +125,20 @@
       }
     ]
   },
+  {{#service.docker_auth_uri}}
+  "fetch": [
+    {
+      "uri": "{{service.docker_auth_uri}}",
+      "extract": true,
+      "executable": false,
+      "cache": false
+    }
+  ],
+  "cmd": "cp -R /mnt/mesos/sandbox/.docker/ ~/.docker/ && /bin/sh -c \"exec /init.sh --name $LIBPROCESS_IP >> /dev/stdout\"",
+  {{/service.docker_auth_uri}}
+  {{^service.docker_auth_uri}}
   "cmd": "/bin/sh -c \"exec /init.sh --name $LIBPROCESS_IP >> /dev/stdout\"",
+  {{/service.docker_auth_uri}}
   "healthChecks": [
     {
       "path": "/ping",

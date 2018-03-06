@@ -27,7 +27,7 @@
           "description": "Number of OpenWhisk invoker instances to run.",
           "type": "integer",
           "minimum": 0,
-          "default": 1
+          "default": 2
         },
         "name": {
           "description": "The name of the OpenWhisk Invoker service instance.",
@@ -72,7 +72,8 @@
         },
         "version_date":{
           "description": "OpenWhisk version date.",
-          "type": "string"
+          "type": "string",
+          "default": "2018-03-06"
         },
         "version_buildno":{
           "description": "OpenWhisk version build number.",
@@ -88,6 +89,39 @@
           "description": "Docker log driver to use for the container.",
           "type": "string",
           "default": "json-file"
+        },
+        "docker_auth_uri":{
+          "description": "HTTP URI for downloading docker.tar.gz for private docker.",
+          "type": "string"
+        },
+        "runtimes_manifest":{
+          "description": "Runtimes Manifest",
+          "type": "string",
+          "default": "{\\\"bypassPullForLocalImages\\\":false,\\\"defaultImagePrefix\\\":\\\"openwhisk\\\",\\\"defaultImageTag\\\":\\\"latest\\\",\\\"runtimes\\\":{\\\"nodejs\\\":[{\\\"kind\\\":\\\"nodejs\\\",\\\"image\\\":{\\\"name\\\":\\\"nodejsaction\\\"},\\\"deprecated\\\":true},{\\\"kind\\\":\\\"nodejs:6\\\",\\\"default\\\":true,\\\"image\\\":{\\\"name\\\":\\\"nodejs6action\\\"}},{\\\"kind\\\":\\\"nodejs:8\\\",\\\"default\\\":false,\\\"image\\\":{\\\"name\\\":\\\"nodejs8action\\\"}}]}}"
+        },
+        "placement": {
+          "description": "Constraints.",
+          "type": "string",
+          "default": "[[\"hostname\", \"UNIQUE\"]]"
+        },
+        "additional_vars": {
+          "description": "Additional env vars.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "value"
+            ]
+          },
+          "default": []
         }
       },
       "required": [
@@ -164,6 +198,21 @@
           "description": "The docker network name to start the action containers on. Defaults to 'bridge'.",
           "type": "string",
           "default": "bridge"
+        },
+        "memory_min": {
+          "description": "The min memory allowance to run an action.",
+          "type": "string",
+          "default": "128 m"
+        },
+        "memory_max": {
+          "description": "The max memory allowance to run an action.",
+          "type": "string",
+          "default": "512 m"
+        },
+        "memory_std": {
+          "description": "The standard memory to run an action.",
+          "type": "string",
+          "default": "256 m"
         }
       },
       "required": [
@@ -215,7 +264,7 @@
         "actions_db_ddoc": {
           "description": "Actions design doc.",
           "type": "string",
-          "default": "whisks.v2"
+          "default": "whisks.v2.1.0"
         },
         "activations_db": {
           "description": "Activations database.",
@@ -225,12 +274,12 @@
         "activations_db_ddoc": {
           "description": "Activations design doc.",
           "type": "string",
-          "default": "whisks.v2"
+          "default": "whisks.v2.1.0"
         },
         "activations_filter_ddoc": {
           "description": "Activation filters design doc.",
           "type": "string",
-          "default": "whisks-filters.v2"
+          "default": "whisks-filters.v2.1.0"
         }
       },
       "required": [
