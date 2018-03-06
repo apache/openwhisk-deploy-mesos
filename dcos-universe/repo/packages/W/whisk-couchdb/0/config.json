@@ -50,6 +50,30 @@
           "description": "The name of the CouchDB service instance.",
           "type": "string",
           "default": "whisk-couchdb"
+        },
+        "placement":{
+          "description": "Constraints.",
+          "type": "string",
+          "default": "[]"
+        },
+        "additional_vars": {
+          "description": "Additional env vars.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "value"
+            ]
+          },
+          "default": []
         }
       },
       "required": [

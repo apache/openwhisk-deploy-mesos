@@ -3,9 +3,16 @@
   "cpus": {{service.cpus}},
   "mem": {{service.mem}},
   "instances": {{service.instances}},
+  "constraints": {{{service.placement}}},
   "env": {
+    {{#service.additional_vars}}
+        "{{key}}":"{{value}}",
+    {{/service.additional_vars}}
     "COUCHDB_USER": "{{service.couchdb-user}}",
-    "COUCHDB_PASSWORD": "{{service.couchdb-password}}"
+    "COUCHDB_PASSWORD": "{{service.couchdb-password}}",
+    "DB_PREFIX": "local_",
+    "DB_HOST": "127.0.0.1",
+    "DB_PORT": "5984"
   },
   "container": {
     "type": "DOCKER",
@@ -38,7 +45,7 @@
   },
   "healthChecks": [
     {
-      "path": "/_stats",
+      "path": "/",
       "protocol": "HTTP",
       "gracePeriodSeconds": 30,
       "intervalSeconds": 60,

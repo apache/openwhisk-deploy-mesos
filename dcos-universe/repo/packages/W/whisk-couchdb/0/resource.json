@@ -7,7 +7,7 @@
   "assets": {
     "container": {
       "docker": {
-        "whisk-couchdb-docker": "adobeapiplatform/whisk-couchdb"
+        "whisk-couchdb-docker": "openwhisk/kube-couchdb"
       }
     }
   }
