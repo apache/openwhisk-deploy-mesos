@@ -3,14 +3,14 @@ Bash script for deploying OpenWhisk packages on DC/OS
 
 # Set up
 - Make sure the environment variables in `Makefile` are set correctly for your environment.
-- Install DC/OS CLI: `make dcos-cli` (by default using v1.10)
+- Install DC/OS CLI: `make cli` (by default using v1.10)
 
 # Install custom universes
 
 In order to add OpenWhisk universe packages to the DC/OS cluster (if not yet done):
 
 ```bash
-make dcos-repo
+make repo
 ```
 
 # Installation steps

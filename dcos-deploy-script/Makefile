@@ -4,13 +4,13 @@ OPENWHISK_UNIVERSE ?= <Universe URL>
 WSK_NAMESPACE ?= guest
 WSK_AUTH_TOKEN ?= <enter token here>
 
-dcos-cli:
+cli:
 	curl -s https://downloads.dcos.io/binaries/cli/darwin/x86-64/dcos-1.10/dcos -o dcos
 	chmod +x dcos
 	./dcos --version
-	./dcos config set core.dcos_url $(DCOS_ENDPOINT)
+	./dcos cluster setup $(DCOS_ENDPOINT)
 
-dcos-repo:
+repo:
 	./dcos package repo add --index=0 openwhisk-universe $(OPENWHISK_UNIVERSE)
 
 .PHONY: openwhisk-install
@@ -45,7 +45,7 @@ kafka-install:
 couchdb-install:
 	echo "$$(tput setaf 4)installing whisk-couchdb ...$$(tput sgr0)"
 	yes | ./dcos package install whisk-couchdb
-	until (curl -s -I http://whisk-couchdb.$(APIGATEWAY_DNS)/_stats | grep "HTTP/1.1 200 OK"); do printf '.'; sleep 5; done
+	until (curl -s -I http://whisk-couchdb.$(APIGATEWAY_DNS) | grep "HTTP/1.1 200 OK"); do printf '.'; sleep 5; done
 	echo "$$(tput setaf 2)couchdb is up!$$(tput sgr0)"
 
 .PHONY: invoker-install
