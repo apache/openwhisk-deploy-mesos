@@ -90,16 +90,6 @@
           "type": "string",
           "default": "json-file"
         },
-        "runtimes_manifest":{
-          "description": "Runtimes Manifest",
-          "type": "string",
-          "default": "{\\\"bypassPullForLocalImages\\\":false,\\\"defaultImagePrefix\\\":\\\"openwhisk\\\",\\\"defaultImageTag\\\":\\\"latest\\\",\\\"runtimes\\\":{\\\"nodejs\\\":[{\\\"kind\\\":\\\"nodejs\\\",\\\"image\\\":{\\\"name\\\":\\\"nodejsaction\\\"},\\\"deprecated\\\":true},{\\\"kind\\\":\\\"nodejs:6\\\",\\\"default\\\":true,\\\"image\\\":{\\\"name\\\":\\\"nodejs6action\\\"}},{\\\"kind\\\":\\\"nodejs:8\\\",\\\"default\\\":false,\\\"image\\\":{\\\"name\\\":\\\"nodejs8action\\\"}}]}}"
-        },
-        "placement":{
-          "description": "Constraints.",
-          "type": "string",
-          "default": "[]"
-        },
         "additional_vars": {
           "description": "Additional env vars.",
           "items": {
@@ -152,46 +142,6 @@
           "description": "Akka cluster bind port (used when actor_provider is cluster).",
           "type": "integer",
           "default": 2551
-        }
-      }
-    },
-    "kamon": {
-      "type": "object",
-      "properties": {
-        "statsd_host": {
-          "description": "Statsd host.",
-          "type": "string",
-          "default": ""
-        },
-        "statsd_port": {
-          "description": "Statsd UDP port.",
-          "type": "integer",
-          "default": 8125
-        },
-        "statsd_enabled": {
-          "description": "Enable statsd kamon module?",
-          "type": "boolean",
-          "default": false
-        },
-        "datadog_host": {
-          "description": "Datadog host.",
-          "type": "string",
-          "default": ""
-        },
-        "datadog_port": {
-          "description": "Datadog UDP port.",
-          "type": "integer",
-          "default": 0
-        },
-        "datadog_application": {
-          "description": "Application id to prefix on datadog metrics.",
-          "type": "string",
-          "default": "openwhisk"
-        },
-        "datadog_enabled": {
-          "description": "Enable datadog kamon module?",
-          "type": "boolean",
-          "default": false
         }
       }
     },

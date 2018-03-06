@@ -3,7 +3,9 @@
   "cpus": {{service.cpus}},
   "mem": {{service.mem}},
   "instances": {{service.instances}},
-  "constraints": {{{service.placement}}},
+  "constraints": [
+    ["hostname","UNIQUE"]
+  ],
   "env": {
 
     "JAVA_OPTS": "{{service.java_opts}}",
@@ -38,7 +40,7 @@
     "WHISK_API_HOST_NAME": "{{apigateway.host}}",
     "EDGE_HOST_APIPORT": "{{apigateway.port}}",
 
-    "RUNTIMES_MANIFEST": "{{{service.runtimes_manifest}}}",
+    "RUNTIMES_MANIFEST": "{\"runtimes\":{\"nodejs\":[{\"kind\":\"nodejs\",\"image\":{\"name\":\"nodejsaction\"},\"deprecated\":true},{\"kind\":\"nodejs:6\",\"default\":true,\"image\":{\"name\":\"nodejs6action\"}}],\"python\":[{\"kind\":\"python\",\"image\":{\"name\":\"python2action\"}},{\"kind\":\"python:2\",\"default\":true,\"image\":{\"name\":\"python2action\"}},{\"kind\":\"python:3\",\"image\":{\"name\":\"python3action\"}}],\"swift\":[{\"kind\":\"swift\",\"image\":{\"name\":\"swiftaction\"},\"deprecated\":true},{\"kind\":\"swift:3\",\"default\":true,\"image\":{\"name\":\"swift3action\"}}],\"java\":[{\"kind\":\"java\",\"attached\":{\"attachmentName\":\"jarfile\",\"attachmentType\":\"application\/java-archive\"},\"sentinelledLogs\":false,\"requireMain\":true,\"image\":{\"name\":\"java8action\"},\"default\":true}]}}",
 
     "DOCKER_REGISTRY": "{{action_container.docker_registry}}",
     "DOCKER_IMAGE_PREFIX": "{{action_container.docker_image_prefix}}",
@@ -54,14 +56,6 @@
     "METRICS_LOG": "{{service.metrics_log}}",
 
     "ZOOKEEPER_HOSTS": "{{zookeeper.hosts}}",
-
-    "CONFIG_kamon_statsd_hostname": "{{kamon.statsd_host}}",
-    "CONFIG_kamon_statsd_port": "{{kamon.statsd_port}}",
-    "CONFIG_kamon_modules_kamonStatsd_autoStart": "{{kamon.statsd_enabled}}",
-    "CONFIG_kamon_datadog_hostname": "{{kamon.datadog_host}}",
-    "CONFIG_kamon_datadog_port": "{{kamon.datadog_port}}",
-    "CONFIG_kamon_datadog_applicationName": "{{kamon.datadog_application}}",
-    "CONFIG_kamon_modules_kamonDatadog_autoStart": "{{kamon.datadog_enabled}}",
 
     {{#service.additional_vars}}
         "{{key}}":"{{value}}",
