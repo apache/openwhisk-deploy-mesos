@@ -80,9 +80,9 @@
           "default": "/tmp/apigateway"
         },
         "acceptedResourceRoles": {
-          "description": "Specify on which node to run (i.e. slave_public)",
+          "description": "Specify on which node to run (i.e. *, slave_public)",
           "type": "string",
-          "default": "*" 
+          "default": "slave_public"
         }
       },
       "required":[
