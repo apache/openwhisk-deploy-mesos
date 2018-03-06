@@ -1,4 +1,4 @@
-# Mesosphere Universe
+# DC/OS Universe of OpenWhisk packages
 
 | Build | Status |
 |---|---|
@@ -486,14 +486,11 @@ in the format the DC/OS Cluster expects.
                        +-----+    http   +--------+
 ```
 
-### Supported DC/OS Versions
+## Supported DC/OS Versions
 Currently Universe Server provides support for the following versions of DC/OS
 
 | DC/OS Release Version | Support Level |
 |-----------------------|---------------|
-| 1.6.1                 | Full Support  |
-| 1.7                   | Full Support  |
-| 1.8                   | Full Support  |
 | 1.9                   | Full Support  |
 | 1.10                  | Full Support  |
 | 1.11                  | Full Support  |
