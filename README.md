@@ -7,7 +7,8 @@ This repository is part of [Apache OpenWhisk](http://openwhisk.incubator.apache.
 
 ## Subprojects
 
-* TODO
+* [dcos-universe](dcos-universe/README.md) contains the source for building OpenWhisk packages in a DC/OS Universe.
+* [dcos-deploy-script](dcos-deploy-script/README.md) helps to orchestrate the deployment of above OpenWhisk packages.
 
 ## Travis builds
 
