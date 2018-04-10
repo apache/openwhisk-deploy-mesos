@@ -1,0 +1,117 @@
+{
+  "id": "/{{service.name}}",
+  "cpus": {{service.cpus}},
+  "mem": {{service.mem}},
+  "instances": {{service.instances}},
+  "env": {
+
+    "JAVA_OPTS": "{{service.java_opts}}",
+
+    "WHISK_VERSION_NAME": "{{service.version_name}}",
+    "WHISK_VERSION_DATE": "{{service.version_date}}",
+    "WHISK_VERSION_BUILDNO": "{{service.version_buildno}}",
+    "WHISK_LOGS_DIR": "/logs",
+
+    "DB_PROVIDER": "{{couchdb.provider}}",
+    "DB_PROTOCOL": "{{couchdb.protocol}}",
+    "DB_PORT": "{{couchdb.port}}",
+    "DB_HOST": "{{couchdb.host}}",
+    "DB_USERNAME": "{{couchdb.username}}",
+    "DB_PASSWORD": "{{couchdb.password}}",
+    "DB_WHISK_ACTIONS": "{{couchdb.actions_db}}",
+    "CONFIG_whisk_db_actionsDdoc": "{{couchdb.actions_db_ddoc}}",
+    "DB_WHISK_ACTIVATIONS": "{{couchdb.activations_db}}",
+    "CONFIG_whisk_db_activationsDdoc": "{{couchdb.activations_db_ddoc}}",
+    "CONFIG_whisk_db_activationsFilterDdoc": "{{couchdb.activations_filter_ddoc}}",
+    "DB_WHISK_AUTHS": "{{couchdb.auths_db}}",
+
+    "LIMITS_ACTIONS_INVOKES_PERMINUTE": "{{limits.actions_invokes_per_minute}}",
+    "LIMITS_ACTIONS_INVOKES_CONCURRENT": "{{limits.actions_invokes_concurrent}}",
+    "LIMITS_TRIGGERS_FIRES_PERMINUTE": "{{limits.triggers_fires_per_minute}}",
+    "LIMITS_ACTIONS_INVOKES_CONCURRENTINSYSTEM": "{{limits.actions_invokes_concurrent_system}}",
+    "LIMITS_ACTIONS_SEQUENCE_MAXLENGTH": "{{limits.actions_sequence_max_length}}",
+
+    "COMPONENT_NAME": "controller",
+    "PORT": "{{service.port}}",
+
+    "KAFKA_HOSTS": "{{kafka.hosts}}",
+    "CONFIG_whisk_kafka_replicationFactor": "{{kafka.replication_factor}}",
+    "CONFIG_whisk_kafka_topics_cacheInvalidation_retentionBytes": "{{kafka.cache_invalidation_retention_bytes}}",
+    "CONFIG_whisk_kafka_topics_cacheInvalidation_retentionMs": "{{kafka.cache_invalidation_retention_ms}}",
+    "CONFIG_whisk_kakfa_topics_cacheInvalidation_segmentBytes": "{{kafka.cache_invalidation_segment_bytes}}",
+    "CONFIG_whisk_kafka_topics_completed_retentionBytes": "{{kafka.completed_retention_bytes}}",
+    "CONFIG_whisk_kafka_topics_completed_retentionMs": "{{kafka.completed_retention_ms}}",
+    "CONFIG_whisk_kakfa_topics_completed_segmentBytes": "{{kafka.completed_segment_bytes}}",
+    "CONFIG_whisk_kafka_topics_health_retentionBytes": "{{kafka.health_retention_bytes}}",
+    "CONFIG_whisk_kafka_topics_health_retentionMs": "{{kafka.health_retention_ms}}",
+    "CONFIG_whisk_kakfa_topics_health_segmentBytes": "{{kafka.health_segment_bytes}}",
+
+    "RUNTIMES_MANIFEST": "{\"runtimes\":{\"nodejs\":[{\"kind\":\"nodejs\",\"image\":{\"name\":\"nodejsaction\"},\"deprecated\":true},{\"kind\":\"nodejs:6\",\"default\":true,\"image\":{\"name\":\"nodejs6action\"}}],\"python\":[{\"kind\":\"python\",\"image\":{\"name\":\"python2action\"}},{\"kind\":\"python:2\",\"default\":true,\"image\":{\"name\":\"python2action\"}},{\"kind\":\"python:3\",\"image\":{\"name\":\"python3action\"}}],\"swift\":[{\"kind\":\"swift\",\"image\":{\"name\":\"swiftaction\"},\"deprecated\":true},{\"kind\":\"swift:3\",\"default\":true,\"image\":{\"name\":\"swift3action\"}}],\"java\":[{\"kind\":\"java\",\"attached\":{\"attachmentName\":\"jarfile\",\"attachmentType\":\"application\/java-archive\"},\"sentinelledLogs\":false,\"requireMain\":true,\"image\":{\"name\":\"java8action\"},\"default\":true}]}}",
+
+    "LOADBALANCER_HOST": "{{apigateway.host}}",
+
+    "CONTROLLER_INSTANCES": "1",
+    "CONTROLLER_LOCALBOOKKEEPING": "true",
+    "CONTROLLER_HA": "false",
+
+    "AKKA_CLUSTER_SEED_NODES": "[]",
+
+    "METRICS_KAMON": "{{service.metrics_kamon}}",
+    "METRICS_LOG": "{{service.metrics_log}}",
+
+    "CONFIG_whisk_loadbalancer_invokerBusyThreshold": "{{service.invoker_busy_threshold}}",
+    "CONFIG_whisk_loadbalancer_blackboxFraction": "{{service.blackbox_fraction}}",
+    "CONFIG_akka_actor_provider":"{{akka.actor_provider}}",
+    "CONFIG_akka_remote_netty_tcp_hostname":"{{akka.cluster_hostname}}",
+    "CONFIG_akka_remote_netty_tcp_port":"{{akka.cluster_port}}",
+    "CONFIG_akka_remote_netty_tcp_bindPort":"{{akka.cluster_bind_port}}",
+
+    {{#service.additional_vars}}
+        "{{key}}":"{{value}}",
+    {{/service.additional_vars}}
+
+    "CONFIG_whisk_memory_min": "{{limits.actions_memory_min}}",
+    "CONFIG_whisk_memory_max": "{{limits.actions_memory_max}}",
+    "CONFIG_whisk_memory_std": "{{limits.actions_memory_std}}"
+  },
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "{{service.image}}",
+      "network": "BRIDGE",
+      "parameters": [
+        {
+          "key":"label",
+          "value":"{{service.docker_label}}"
+        },
+        {
+          "key":"log-driver",
+          "value":"{{service.docker_log_driver}}"
+        }
+      ],
+      "portMappings": [
+         {
+           "containerPort": 8888,
+           "hostPort": {{service.port}},
+           "servicePort": 0,
+           "protocol": "tcp"
+         }
+       ],
+      "forcePullImage": true
+    }
+  },
+  "cmd": "/bin/sh -c \"exec /init.sh 0 >> /dev/stdout\"",
+  "healthChecks": [
+    {
+      "path": "/ping",
+      "protocol": "HTTP",
+      "gracePeriodSeconds": 30,
+      "intervalSeconds": 15,
+      "timeoutSeconds": 2,
+      "maxConsecutiveFailures": 3
+    }
+  ],
+  "labels": {
+    "DCOS_SERVICE_NAME": "{{service.name}}"
+  }
+}

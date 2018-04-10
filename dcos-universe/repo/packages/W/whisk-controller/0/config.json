@@ -1,0 +1,356 @@
+{
+  "type": "object",
+  "properties": {
+    "service": {
+      "description": "OpenWhisk controller Configuration Properties",
+      "type": "object",
+      "properties": {
+        "port": {
+          "description": "Host port for OpenWhisk controller (default = 8888).",
+          "type": "integer",
+          "default": 8888,
+          "minimum": 0
+        },
+        "cpus": {
+          "description": "CPU shares to allocate to each OpenWhisk controller instance.",
+          "type": "number",
+          "minimum": 0.1,
+          "default": 1
+        },
+        "mem": {
+          "description": "Memory (MB) to allocate to each OpenWhisk controller instance.",
+          "type": "number",
+          "minimum": 512.0,
+          "default": 2048.0
+        },
+        "instances": {
+          "description": "Number of OpenWhisk controller instances to run.",
+          "type": "integer",
+          "minimum": 0,
+          "default": 1
+        },
+        "name": {
+          "description": "The name of the OpenWhisk Controller service instance.",
+          "type": "string",
+          "default": "whisk-controller"
+        },
+        "image": {
+          "description": "The docker image of the OpenWhisk Controller service instance.",
+          "type": "string",
+          "default": "openwhisk/controller"
+        },
+        "java_opts": {
+          "description": "The jvm args.",
+          "type": "string",
+          "default": "-Xmx768m"
+        },
+        "metrics_kamon": {
+          "description": "Enable kamon metrics output?",
+          "type": "boolean",
+          "default": false
+
+        },
+        "metrics_log":{
+          "description": "Enable log metrics output?",
+          "type": "boolean",
+          "default": true
+        },
+        "invoker_busy_threshold":{
+          "description": "Number of activations an invoker can receive concurrently.",
+          "type": "integer",
+          "default": 16
+        },
+        "blackbox_fraction":{
+          "description": "The portion of invokers reserved for use with blackbox containers.",
+          "type": "number",
+          "default": 0.1
+        },
+        "version_name":{
+          "description": "OpenWhisk version name.",
+          "type": "string",
+          "default": "openwhisk"
+        },
+        "version_date":{
+          "description": "OpenWhisk version date.",
+          "type": "string",
+          "default": "2018-03-06"
+        },
+        "version_buildno":{
+          "description": "OpenWhisk version build number.",
+          "type": "string",
+          "default": "latest"
+        },
+        "docker_label":{
+          "description": "Label to add to docker container.",
+          "type": "string",
+          "default": "controller"
+        },
+        "docker_log_driver":{
+          "description": "Docker log driver to use for the container.",
+          "type": "string",
+          "default": "json-file"
+        },
+        "additional_vars": {
+          "description": "Additional env vars.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "value"
+            ]
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "port",
+        "cpus",
+        "name",
+        "instances",
+        "mem",
+        "image",
+        "version_date"
+      ]
+    },
+    "akka":{
+      "type": "object",
+      "properties": {
+        "actor_provider": {
+          "description": "Akka actor provider (local or cluster).",
+          "type": "string",
+          "default": "local"
+        },
+        "cluster_hostname": {
+          "description": "Akka cluster hostname (used when actor_provider is cluster).",
+          "type": "string",
+          "default": "local"
+        },
+        "cluster_port": {
+          "description": "Akka cluster port (used when actor_provider is cluster).",
+          "type": "string",
+          "default": "$PORT_2551"
+        },
+        "cluster_bind_port": {
+          "description": "Akka cluster bind port (used when actor_provider is cluster).",
+          "type": "integer",
+          "default": 2551
+        }
+      }
+    },
+    "couchdb": {
+      "description": "Linked CouchDB properties",
+      "type": "object",
+      "properties": {
+        "provider": {
+          "description": "CouchDB provider.",
+          "type": "string",
+          "default": "CouchDB"
+        },
+        "protocol": {
+          "description": "CouchDB protocol.",
+          "type": "string",
+          "default": "http"
+        },
+        "host": {
+          "description": "Host location of CouchDB cluster.",
+          "type": "string",
+          "default": "whisk-couchdb.marathon.mesos"
+        },
+        "port": {
+          "description": "Host HTTP port of CouchDB cluster (default = 5984).",
+          "type": "integer",
+          "default": 5984,
+          "minimum": 0
+        },
+        "username": {
+          "description": "CouchDB username.",
+          "type": "string",
+          "default": "whisk_admin"
+        },
+        "password": {
+          "description": "CouchDB password.",
+          "type": "string",
+          "default": "some_passw0rd"
+        },
+        "actions_db": {
+          "description": "Actions database.",
+          "type": "string",
+          "default": "local_whisks"
+        },
+        "actions_db_ddoc": {
+          "description": "Actions design doc.",
+          "type": "string",
+          "default": "whisks.v2.1.0"
+        },
+        "activations_db": {
+          "description": "Activations database.",
+          "type": "string",
+          "default": "local_activations"
+        },
+        "activations_db_ddoc": {
+          "description": "Activations design doc.",
+          "type": "string",
+          "default": "whisks.v2.1.0"
+        },
+        "activations_filter_ddoc": {
+          "description": "Activation filters design doc.",
+          "type": "string",
+          "default": "whisks-filters.v2.1.0"
+        },
+        "auths_db": {
+          "description": "Auth database.",
+          "type": "string",
+          "default": "local_subjects"
+        }
+      },
+      "required": [
+        "provider",
+        "protocol",
+        "host",
+        "port",
+        "username",
+        "password"
+      ]
+    },
+    "kafka": {
+      "description": "Linked Kafka properties",
+      "type": "object",
+      "properties": {
+        "hosts": {
+          "description": "Host location of Kafka cluster.",
+          "type": "string",
+          "default": "kafka-0-broker.kafka.mesos:9092"
+        },
+        "replication_factor": {
+          "description": "Kafka replication factor specified when creating topics.",
+          "type": "integer",
+          "default": 2,
+          "minimum": 1
+        },
+        "cache_invalidation_retention_bytes":{
+          "description": "Cache invalidation topic: Kafka retention bytes specified when creating topics.",
+          "type": "integer",
+          "default": 1073741824
+        },
+        "cache_invalidation_retention_ms":{
+          "description": "Cache invalidation topic: Kafka retention ms specified when creating topics.",
+          "type": "integer",
+          "default": 172800000
+        },
+        "cache_invalidation_segment_bytes":{
+          "description": "Cache invalidation topic: Kafka segment bytes specified when creating topics.",
+          "type": "integer",
+          "default": 536870912
+        },
+        "completed_retention_bytes":{
+          "description": "Completed topic: Kafka retention bytes specified when creating topics.",
+          "type": "integer",
+          "default": 1073741824
+        },
+        "completed_retention_ms":{
+          "description": "Completed topic: Kafka retention ms specified when creating topics.",
+          "type": "integer",
+          "default": 172800000
+        },
+        "completed_segment_bytes":{
+          "description": "Completed topic: Kafka segment bytes specified when creating topics.",
+          "type": "integer",
+          "default": 536870912
+        },
+        "health_retention_bytes":{
+          "description": "Health topic: Kafka retention bytes specified when creating topics.",
+          "type": "integer",
+          "default": 1073741824
+        },
+        "health_retention_ms":{
+          "description": "Health topic: Kafka retention ms specified when creating topics.",
+          "type": "integer",
+          "default": 172800000
+        },
+        "health_segment_bytes":{
+          "description": "Health topic: Kafka segment bytes specified when creating topics.",
+          "type": "integer",
+          "default": 536870912
+        }
+      },
+      "required": [
+        "hosts"
+      ]
+    },
+    "apigateway": {
+      "description": "Linked API Gateway properties",
+      "type": "object",
+      "properties": {
+        "host": {
+          "description": "Host location of API Gateway cluster.",
+          "type": "string",
+          "default": "apigateway.marathon.mesos"
+        },
+        "port": {
+          "description": "Host HTTP port of API Gateway cluster (default = 80).",
+          "type": "integer",
+          "default": 80,
+          "minimum": 0
+        }
+      },
+      "required": [
+        "host",
+        "port"
+      ]
+    },
+    "limits": {
+      "description": "System limits of OpenWhisk",
+      "type": "object",
+      "properties": {
+        "actions_invokes_per_minute": {
+          "description": "Number of activations per minute per namespace (either executing or queued for execution).",
+          "type": "integer",
+          "default": 60
+        },
+        "actions_invokes_concurrent": {
+          "description": "The maximum concurrent invocations allowed per namespace.",
+          "type": "integer",
+          "default": 30
+        },
+        "triggers_fires_per_minute": {
+          "description": "The allowed namespace trigger firings per minute.",
+          "type": "integer",
+          "default": 60
+        },
+        "actions_invokes_concurrent_system": {
+          "description": "The maximum concurrent invocations the system will allow across all namespaces.",
+          "type": "integer",
+          "default": 5000
+        },
+        "actions_sequence_max_length": {
+          "description": "The maximum number of actions in a sequence.",
+          "type": "integer",
+          "default": 50
+        },
+        "actions_memory_min": {
+          "description": "The min memory allowance to run an action.",
+          "type": "string",
+          "default": "128 m"
+        },
+        "actions_memory_max": {
+          "description": "The max memory allowance to run an action.",
+          "type": "string",
+          "default": "512 m"
+        },
+        "actions_memory_std": {
+          "description": "The default memory allowance to run an action.",
+          "type": "string",
+          "default": "256 m"
+        }
+      }
+    }
+  }
+}

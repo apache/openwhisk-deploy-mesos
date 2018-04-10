@@ -1,0 +1,59 @@
+{
+  "id": "/{{service.name}}",
+  "cpus": {{service.cpus}},
+  "mem": {{service.mem}},
+  "instances": {{service.instances}},
+  "constraints": {{{service.placement}}},
+  "env": {
+    {{#service.additional_vars}}
+        "{{key}}":"{{value}}",
+    {{/service.additional_vars}}
+    "COUCHDB_USER": "{{service.couchdb-user}}",
+    "COUCHDB_PASSWORD": "{{service.couchdb-password}}",
+    "DB_PREFIX": "local_",
+    "DB_HOST": "127.0.0.1",
+    "DB_PORT": "5984"
+  },
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "{{resource.assets.container.docker.whisk-couchdb-docker}}",
+      "network": "BRIDGE",
+      "portMappings": [
+        {
+          "containerPort": {{service.couchdb-port}},
+          "hostPort": {{service.couchdb-port}},
+          "servicePort": 0,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "volumes": [
+      {
+        "containerPath": "/usr/local/var/lib/couchdb",
+        "hostPath": "couchdb",
+        "mode": "RW"
+      },
+      {
+        "containerPath": "couchdb",
+        "mode": "RW",
+        "persistent": {
+          "size": {{service.volume-size}}
+        }
+      }
+    ]
+  },
+  "healthChecks": [
+    {
+      "path": "/",
+      "protocol": "HTTP",
+      "gracePeriodSeconds": 30,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3
+    }
+  ],
+  "labels": {
+    "DCOS_SERVICE_NAME": "{{service.name}}"
+  }
+}

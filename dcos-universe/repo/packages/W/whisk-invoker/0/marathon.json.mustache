@@ -1,0 +1,149 @@
+{
+  "id": "/{{service.name}}",
+  "cpus": {{service.cpus}},
+  "mem": {{service.mem}},
+  "instances": {{service.instances}},
+  "constraints": [
+    ["hostname","UNIQUE"]
+  ],
+  "env": {
+
+    "JAVA_OPTS": "{{service.java_opts}}",
+
+    "WHISK_VERSION_NAME": "{{service.version_name}}",
+    "WHISK_VERSION_DATE": "{{service.version_date}}",
+    "WHISK_VERSION_BUILDNO": "{{service.version_buildno}}",
+    "WHISK_LOGS_DIR": "/logs",
+
+    "COMPONENT_NAME": "invoker",
+    "PORT": "{{service.port}}",
+
+    "KAFKA_HOSTS": "{{kafka.hosts}}",
+    "CONFIG_whisk_kafka_replicationFactor": "{{kafka.replication_factor}}",
+    "CONFIG_whisk_kafka_topics_invoker_retentionBytes": "{{kafka.retention_bytes}}",
+    "CONFIG_whisk_kafka_topics_invoker_retentionMs": "{{kafka.retention_ms}}",
+    "CONFIG_whisk_kakfa_topics_invoker_segmentBytes": "{{kafka.segment_bytes}}",
+
+    "DB_PROVIDER": "{{couchdb.provider}}",
+    "DB_PROTOCOL": "{{couchdb.protocol}}",
+    "DB_PORT": "{{couchdb.port}}",
+    "DB_HOST": "{{couchdb.host}}",
+    "DB_USERNAME": "{{couchdb.username}}",
+    "DB_PASSWORD": "{{couchdb.password}}",
+    "DB_WHISK_ACTIONS": "{{couchdb.actions_db}}",
+    "CONFIG_whisk_db_actionsDdoc": "{{couchdb.actions_db_ddoc}}",
+    "DB_WHISK_ACTIVATIONS": "{{couchdb.activations_db}}",
+    "CONFIG_whisk_db_activationsDdoc": "{{couchdb.activations_db_ddoc}}",
+    "CONFIG_whisk_db_activationsFilterDdoc": "{{couchdb.activations_filter_ddoc}}",
+
+    "EDGE_HOST": "{{apigateway.host}}",
+    "WHISK_API_HOST_NAME": "{{apigateway.host}}",
+    "EDGE_HOST_APIPORT": "{{apigateway.port}}",
+
+    "RUNTIMES_MANIFEST": "{\"runtimes\":{\"nodejs\":[{\"kind\":\"nodejs\",\"image\":{\"name\":\"nodejsaction\"},\"deprecated\":true},{\"kind\":\"nodejs:6\",\"default\":true,\"image\":{\"name\":\"nodejs6action\"}}],\"python\":[{\"kind\":\"python\",\"image\":{\"name\":\"python2action\"}},{\"kind\":\"python:2\",\"default\":true,\"image\":{\"name\":\"python2action\"}},{\"kind\":\"python:3\",\"image\":{\"name\":\"python3action\"}}],\"swift\":[{\"kind\":\"swift\",\"image\":{\"name\":\"swiftaction\"},\"deprecated\":true},{\"kind\":\"swift:3\",\"default\":true,\"image\":{\"name\":\"swift3action\"}}],\"java\":[{\"kind\":\"java\",\"attached\":{\"attachmentName\":\"jarfile\",\"attachmentType\":\"application\/java-archive\"},\"sentinelledLogs\":false,\"requireMain\":true,\"image\":{\"name\":\"java8action\"},\"default\":true}]}}",
+
+    "DOCKER_REGISTRY": "{{action_container.docker_registry}}",
+    "DOCKER_IMAGE_PREFIX": "{{action_container.docker_image_prefix}}",
+    "DOCKER_IMAGE_TAG": "{{action_container.docker_image_tag}}",
+
+    "INVOKER_CONTAINER_NETWORK": "{{action_container.docker_network_name}}",
+    "CONFIG_whisk_containerFactory_containerArgs_numCore": "{{service.invoker_numcore}}",
+    "CONFIG_whisk_containerFactory_containerArgs_coreShare": "{{service.invoker_coreshare}}",
+    "INVOKER_INSTANCES": "1",
+    "CONFIG_whisk_docker_containerFactory_useRunc": "false",
+
+    "METRICS_KAMON": "{{service.metrics_kamon}}",
+    "METRICS_LOG": "{{service.metrics_log}}",
+
+    "ZOOKEEPER_HOSTS": "{{zookeeper.hosts}}",
+
+    {{#service.additional_vars}}
+        "{{key}}":"{{value}}",
+    {{/service.additional_vars}}
+
+    "CONFIG_whisk_memory_min": "{{action_container.memory_min}}",
+    "CONFIG_whisk_memory_max": "{{action_container.memory_max}}",
+    "CONFIG_whisk_memory_std": "{{action_container.memory_std}}"
+  },
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "{{service.image}}",
+      "network": "BRIDGE",
+      "parameters": [
+        {
+          "key":"label",
+          "value":"{{{service.docker_label}}}"
+        },
+        {
+          "key":"log-driver",
+          "value":"{{service.docker_log_driver}}"
+        }
+      ],
+      "portMappings": [
+        {
+          "containerPort": 8085,
+          "hostPort": {{service.port}},
+          "servicePort": 0,
+          "protocol": "tcp"
+        }
+      ],
+      "privileged": true,
+      "forcePullImage": true
+    },
+    "volumes": [
+      {
+        "containerPath": "/logs",
+        "hostPath": "~/tmp/openwhisk/invoker/logs",
+        "mode": "RW"
+      },
+      {
+        "containerPath": "/var/run/docker.sock",
+        "hostPath": "/var/run/docker.sock",
+        "mode": "RW"
+      },
+      {
+        "containerPath": "/containers",
+        "hostPath": "/var/lib/docker/containers",
+        "mode": "RW"
+      },
+      {
+        "containerPath": "/sys/fs/cgroup",
+        "hostPath": "/sys/fs/cgroup",
+        "mode": "RW"
+      },
+      {
+        "containerPath": "/run/runc",
+        "hostPath": "/run/runc",
+        "mode": "RW"
+      }
+    ]
+  },
+  {{#service.docker_auth_uri}}
+  "fetch": [
+    {
+      "uri": "{{service.docker_auth_uri}}",
+      "extract": true,
+      "executable": false,
+      "cache": false
+    }
+  ],
+  "cmd": "cp -R /mnt/mesos/sandbox/.docker/ ~/.docker/ && /bin/sh -c \"exec /init.sh --name $LIBPROCESS_IP >> /dev/stdout\"",
+  {{/service.docker_auth_uri}}
+  {{^service.docker_auth_uri}}
+  "cmd": "/bin/sh -c \"exec /init.sh --name $LIBPROCESS_IP >> /dev/stdout\"",
+  {{/service.docker_auth_uri}}
+  "healthChecks": [
+    {
+      "path": "/ping",
+      "protocol": "HTTP",
+      "gracePeriodSeconds": 30,
+      "intervalSeconds": 15,
+      "timeoutSeconds": 2,
+      "maxConsecutiveFailures": 3
+    }
+  ],
+  "labels": {
+    "DCOS_SERVICE_NAME": "{{service.name}}"
+  }
+}

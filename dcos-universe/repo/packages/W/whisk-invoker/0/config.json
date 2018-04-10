@@ -1,0 +1,314 @@
+{
+  "type": "object",
+  "properties": {
+    "service": {
+      "description": "OpenWhisk Invoker Configuration Properties",
+      "type": "object",
+      "properties": {
+        "port": {
+          "description": "Host port for OpenWhisk invoker (default = 8085)",
+          "type": "integer",
+          "default": 8085,
+          "minimum": 0
+        },
+        "cpus": {
+          "description": "CPU shares to allocate to each OpenWhisk invoker instance.",
+          "type": "number",
+          "minimum": 0.1,
+          "default": 0.5
+        },
+        "mem": {
+          "description": "Memory (MB) to allocate to each OpenWhisk invoker instance.",
+          "type": "number",
+          "minimum": 512.0,
+          "default": 1024.0
+        },
+        "instances": {
+          "description": "Number of OpenWhisk invoker instances to run.",
+          "type": "integer",
+          "minimum": 0,
+          "default": 2
+        },
+        "name": {
+          "description": "The name of the OpenWhisk Invoker service instance.",
+          "type": "string",
+          "default": "whisk-invoker"
+        },
+        "image": {
+          "description": "The docker image of the OpenWhisk Invoker service instance.",
+          "type": "string",
+          "default": "openwhisk/invoker"
+        },
+        "java_opts": {
+          "description": "The jvm args.",
+          "type": "string",
+          "default": "-Xmx768m"
+        },
+        "invoker_numcore": {
+          "description": "The number of cores available on each invoker instance.",
+          "type": "integer",
+          "default": 4
+        },
+        "invoker_coreshare":{
+          "description": "The factor by which cores will be shared in each invoker instance.",
+          "type": "integer",
+          "default": 2
+        },
+        "metrics_kamon": {
+          "description": "Enable kamon metrics output?",
+          "type": "boolean",
+          "default": false
+
+        },
+        "metrics_log":{
+          "description": "Enable log metrics output?",
+          "type": "boolean",
+          "default": true
+        },
+        "version_name":{
+          "description": "OpenWhisk version name.",
+          "type": "string",
+          "default": "openwhisk"
+        },
+        "version_date":{
+          "description": "OpenWhisk version date.",
+          "type": "string",
+          "default": "2018-03-06"
+        },
+        "version_buildno":{
+          "description": "OpenWhisk version build number.",
+          "type": "string",
+          "default": "latest"
+        },
+        "docker_label":{
+          "description": "Label to add to docker container.",
+          "type": "string",
+          "default": "invoker"
+        },
+        "docker_log_driver":{
+          "description": "Docker log driver to use for the container.",
+          "type": "string",
+          "default": "json-file"
+        },
+        "docker_auth_uri":{
+          "description": "HTTP URI for downloading docker.tar.gz for private docker.",
+          "type": "string"
+        },
+        "additional_vars": {
+          "description": "Additional env vars.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "value"
+            ]
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "port",
+        "cpus",
+        "name",
+        "instances",
+        "mem",
+        "image",
+        "version_date"
+      ]
+    },
+    "action_container": {
+      "description": "Action container configs",
+      "type": "object",
+      "properties": {
+        "docker_registry": {
+          "description": "The value to be set as DOCKER_REGISTRY in environment variables.",
+          "type": "string",
+          "default": " "
+        },
+        "docker_image_prefix": {
+          "description": "The value to be set as DOCKER_IMAGE_PREFIX in environment variables.",
+          "type": "string",
+          "default": "openwhisk"
+        },
+        "docker_image_tag": {
+          "description": "The value to be set as DOCKER_IMAGE_TAG in environment variables.",
+          "type": "string",
+          "default": "latest"
+        },
+        "docker_network_name": {
+          "description": "The docker network name to start the action containers on. Defaults to 'bridge'.",
+          "type": "string",
+          "default": "bridge"
+        },
+        "memory_min": {
+          "description": "The min memory allowance to run an action.",
+          "type": "string",
+          "default": "128 m"
+        },
+        "memory_max": {
+          "description": "The max memory allowance to run an action.",
+          "type": "string",
+          "default": "512 m"
+        },
+        "memory_std": {
+          "description": "The standard memory to run an action.",
+          "type": "string",
+          "default": "256 m"
+        }
+      },
+      "required": [
+        "docker_registry",
+        "docker_image_prefix",
+        "docker_image_tag"
+      ]
+    },
+    "couchdb": {
+      "description": "Linked CouchDB properties",
+      "type": "object",
+      "properties": {
+        "provider": {
+          "description": "CouchDB provider.",
+          "type": "string",
+          "default": "CouchDB"
+        },
+        "protocol": {
+          "description": "CouchDB protocol.",
+          "type": "string",
+          "default": "http"
+        },
+        "host": {
+          "description": "Host location of CouchDB cluster.",
+          "type": "string",
+          "default": "whisk-couchdb.marathon.mesos"
+        },
+        "port": {
+          "description": "Host HTTP port of CouchDB cluster (default = 5984).",
+          "type": "integer",
+          "default": 5984,
+          "minimum": 0
+        },
+        "username": {
+          "description": "CouchDB username.",
+          "type": "string",
+          "default": "whisk_admin"
+        },
+        "password": {
+          "description": "CouchDB password.",
+          "type": "string",
+          "default": "some_passw0rd"
+        },
+        "actions_db": {
+          "description": "Actions database.",
+          "type": "string",
+          "default": "local_whisks"
+        },
+        "actions_db_ddoc": {
+          "description": "Actions design doc.",
+          "type": "string",
+          "default": "whisks.v2.1.0"
+        },
+        "activations_db": {
+          "description": "Activations database.",
+          "type": "string",
+          "default": "local_activations"
+        },
+        "activations_db_ddoc": {
+          "description": "Activations design doc.",
+          "type": "string",
+          "default": "whisks.v2.1.0"
+        },
+        "activations_filter_ddoc": {
+          "description": "Activation filters design doc.",
+          "type": "string",
+          "default": "whisks-filters.v2.1.0"
+        }
+      },
+      "required": [
+        "provider",
+        "protocol",
+        "host",
+        "port",
+        "username",
+        "password"
+      ]
+    },
+    "kafka": {
+      "description": "Linked Kafka properties",
+      "type": "object",
+      "properties": {
+        "hosts": {
+          "description": "Connection string of Kafka cluster.",
+          "type": "string",
+          "default": "kafka-0-broker.kafka.mesos:9092"
+        },
+        "replication_factor": {
+          "description": "Kafka replication factor specified when creating topics.",
+          "type": "integer",
+          "default": 2,
+          "minimum": 1
+        },
+        "retention_bytes":{
+          "description": "Kafka retention bytes specified when creating topics.",
+          "type": "integer",
+          "default": 1073741824
+        },
+        "retention_ms":{
+          "description": "Kafka retention ms specified when creating topics.",
+          "type": "integer",
+          "default": 172800000
+        },
+        "segment_bytes":{
+          "description": "Kafka segment bytes specified when creating topics.",
+          "type": "integer",
+          "default": 536870912
+        }
+      },
+      "required": [
+        "hosts"
+      ]
+    },
+    "zookeeper": {
+      "description": "Linked ZooKeeper properties",
+      "type": "object",
+      "properties": {
+        "hosts": {
+          "description": "Connection string for ZooKeeper.",
+          "type": "string",
+          "default": "master.mesos"
+        }
+      },
+      "required": [
+        "hosts"
+      ]
+    },
+    "apigateway": {
+      "description": "Linked API Gateway properties",
+      "type": "object",
+      "properties": {
+        "host": {
+          "description": "Host location of API Gateway cluster.",
+          "type": "string",
+          "default": "apigateway.marathon.mesos"
+        },
+        "port": {
+          "description": "Host HTTP port of API Gateway cluster.",
+          "type": "integer",
+          "default": 80,
+          "minimum": 0
+        }
+      },
+      "required": [
+        "host",
+        "port"
+      ]
+    }
+  }
+}
