@@ -229,6 +229,11 @@
           "description": "Activation filters design doc.",
           "type": "string",
           "default": "whisks-filters.v2.1.0"
+        },
+        "auths_db": {
+          "description": "Auth database.",
+          "type": "string",
+          "default": "local_subjects"
         }
       },
       "required": [
